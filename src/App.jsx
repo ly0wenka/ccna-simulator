@@ -1,3 +1,5 @@
+import { motion } from 'framer-motion'
+
 export default function App() {
   const ports = [
     { id: 'Fa0/5', device: 'PC-01', status: 'Connected' },
@@ -6,70 +8,62 @@ export default function App() {
   ];
 
   const simulateViolation = (port) => {
-    alert(`Port ${port.id}\nSTATUS: ERR-DISABLED\nUnauthorized device detected`);
-  };
+    alert(`Port ${port.id}\nSTATUS: ERR-DISABLED\nUnauthorized device detected`)
+  }
+
+  const deviceStyle={
+    border:'2px solid black',
+    padding:'20px',
+    width:'160px',
+    textAlign:'center',
+    borderRadius:'20px',
+    background:'white',
+    cursor:'grab',
+    position:'absolute'
+  }
 
   return (
     <div style={{padding:'30px',fontFamily:'Arial'}}>
       <h1>CCNA Network Topology Simulator</h1>
+      <p>Перетягуй пристрої мишею (утримуй ліву кнопку і переміщуй)</p>
 
-      <div style={{
-        display:'flex',
-        justifyContent:'center',
-        alignItems:'center',
-        gap:'50px',
-        marginTop:'50px'
-      }}>
+      <div style={{position:'relative',height:'600px',border:'1px solid gray'}}>
 
-        <div style={{
-          border:'2px solid black',
-          padding:'20px',
-          width:'150px',
-          textAlign:'center'
-        }}>
+        <motion.div drag style={{...deviceStyle,left:'50px',top:'150px'}}>
           🖥️<br/><b>PC-01</b><br/>
           IP: 192.168.1.10
-        </div>
+        </motion.div>
 
-        <div>
-          ─────Fa0/5─────
-        </div>
-
-        <div style={{
-          border:'3px solid blue',
-          padding:'30px',
-          width:'250px',
-          textAlign:'center',
-          background:'#f0f5ff'
-        }}>
+        <motion.div
+          drag
+          style={{
+            ...deviceStyle,
+            left:'420px',
+            top:'140px',
+            width:'260px',
+            background:'#e8f0ff'
+          }}
+        >
           <b>Cisco Switch</b>
           <br/><br/>
           {ports.map((port)=>(
-            <div key={port.id} style={{margin:'8px'}}>
-              {port.id} | {port.device} | {port.status}
+            <div key={port.id}>
+              {port.id} | {port.device}
               <button
-                style={{marginLeft:'10px'}}
                 onClick={()=>simulateViolation(port)}
+                style={{marginLeft:'10px'}}
               >
                 Test
               </button>
             </div>
           ))}
-        </div>
+        </motion.div>
 
-        <div>
-          ─────Fa0/7─────
-        </div>
-
-        <div style={{
-          border:'2px solid black',
-          padding:'20px',
-          width:'150px',
-          textAlign:'center'
-        }}>
+        <motion.div drag style={{...deviceStyle,left:'850px',top:'150px'}}>
           💻<br/><b>Laptop-02</b><br/>
           IP: 192.168.1.20
-        </div>
+        </motion.div>
+
       </div>
     </div>
   )

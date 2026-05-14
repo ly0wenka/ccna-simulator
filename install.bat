@@ -1,0 +1,1 @@
+"C:\Program Files\nodejs\npm.cmd" install framer-motion
