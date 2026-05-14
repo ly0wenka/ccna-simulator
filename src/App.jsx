@@ -2,14 +2,13 @@ import { useState } from 'react'
 import { motion } from 'framer-motion'
 
 export default function App() {
-  const [selected, setSelected] = useState([])
+  const [devices,setDevices]=useState([
+    {id:'pc',name:'PC-01',icon:'🖥️',x:100,y:350,ports:['Fa0']},
+    {id:'sw',name:'Cisco Switch',icon:'🔵',x:500,y:350,ports:['Fa0/1','Fa0/2','Fa0/3']},
+    {id:'lap',name:'Laptop-02',icon:'💻',x:900,y:350,ports:['Fa0']}
+  ])
 
-  const devices = [
-    {id:'pc',name:'PC-01',icon:'🖥️',x:50,y:150},
-    {id:'sw',name:'Cisco Switch',icon:'🔵',x:420,y:150},
-    {id:'lap',name:'Laptop-02',icon:'💻',x:850,y:150}
-  ]
-
+  const [selected,setSelected]=useState([])
   const [connections,setConnections]=useState([])
 
   function connect(id){
@@ -17,30 +16,39 @@ export default function App() {
     setSelected(next)
 
     if(next.length===2){
-      setConnections([...connections,[next[0],next[1]]])
+      setConnections(prev=>[...prev,[next[0],next[1]]])
       setSelected([])
     }
+  }
+
+  function updatePosition(id,info){
+    setDevices(prev=>prev.map(d=>
+      d.id===id
+      ? {...d,x:d.x+info.offset.x,y:d.y+info.offset.y}
+      : d
+    ))
   }
 
   return (
     <div style={{padding:'20px'}}>
       <h1>CCNA Network Topology Simulator</h1>
-      <p>Клікни на два пристрої для створення кабелю. Перетягуй мишею.</p>
+      <p>Двічі натисни на два пристрої для створення кабелю</p>
 
-      <div style={{position:'relative',height:'600px',border:'1px solid gray'}}>
+      <div style={{position:'relative',height:'700px',border:'1px solid gray'}}>
 
         <svg style={{position:'absolute',width:'100%',height:'100%'}}>
           {connections.map((c,i)=>{
             const a=devices.find(d=>d.id===c[0])
             const b=devices.find(d=>d.id===c[1])
-            return (
+
+            return(
               <line
                 key={i}
                 x1={a.x+80}
-                y1={a.y+40}
+                y1={a.y+50}
                 x2={b.x+80}
-                y2={b.y+40}
-                stroke='black'
+                y2={b.y+50}
+                stroke='lime'
                 strokeWidth='3'
               />
             )
@@ -51,22 +59,28 @@ export default function App() {
           <motion.div
             key={device.id}
             drag
+            dragMomentum={false}
+            onDragEnd={(e,info)=>updatePosition(device.id,info)}
             onDoubleClick={()=>connect(device.id)}
             style={{
               position:'absolute',
               left:device.x,
               top:device.y,
-              border:'2px solid black',
-              padding:'20px',
-              width:'160px',
-              textAlign:'center',
+              width:'170px',
+              border:'2px solid gray',
               borderRadius:'20px',
-              background:'white',
+              textAlign:'center',
+              padding:'20px',
               cursor:'grab'
             }}
           >
-            {device.icon}<br/>
+            <div>{device.icon}</div>
             <b>{device.name}</b>
+            <div style={{marginTop:'10px'}}>
+              {device.ports.map(p=>(
+                <div key={p}>🔌 {p}</div>
+              ))}
+            </div>
           </motion.div>
         ))}
       </div>
